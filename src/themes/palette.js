@@ -34,24 +34,24 @@ const Palette = (mode) => {
 
   return createTheme({
     palette: {
-      mode,
+      mode: mode === 'dark' ? 'dark' : 'light',
       common: {
         black: '#000',
         white: '#fff'
       },
       ...paletteColor,
       text: {
-        primary: paletteColor.grey[700],
-        secondary: paletteColor.grey[500],
-        disabled: paletteColor.grey[400]
+        primary: paletteColor.grey[100], // Change to a suitable text color for dark mode
+        secondary: paletteColor.grey[300], // Change to a suitable text color for dark mode
+        disabled: paletteColor.grey[500] // Change to a suitable text color for dark mode
       },
       action: {
-        disabled: paletteColor.grey[300]
+        disabled: paletteColor.grey[700] // Change to a suitable action color for dark mode
       },
-      divider: paletteColor.grey[200],
+      divider: paletteColor.grey[800], // Change to a suitable divider color for dark mode
       background: {
-        paper: paletteColor.grey[0],
-        default: paletteColor.grey.A50
+        paper: '#202127'        , // Change to a suitable background color for dark mode
+        default: '#16181c' // Change to a suitable default background color for dark mode
       }
     }
   });

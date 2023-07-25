@@ -8,6 +8,7 @@ import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
 import RevenueByDateChart from './RevenueByDate';
 import RevenueChart from './RevenueChart';
 import RevenueBySourceChart from './RevenueBySource';
+import RevenueByStateChart from './RevenueByState';
 import calculateMetrics from 'utils/calculateMetrics';
 import { formatNumber } from 'utils/formatNumber';
 import Loadable from 'components/Loadable';
@@ -22,14 +23,11 @@ const DashboardDefault = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the CSV data from the API endpoint
     axios
       .get('http://localhost:5000/api/csv')
       .then((response) => {
         const data = response.data;
 
-        console.log('data', data);
-        // Parse the "order_date" strings into date objects
         const sortedData = data
           .map((item) => ({
             ...item,
@@ -46,29 +44,23 @@ const DashboardDefault = () => {
   }, []);
 
   useEffect(() => {
-    // Filter the data to keep only the orders within the last 30 days from the latest order_date
     if (responseData.length === 0) {
       return;
     }
 
-    // Find the latest date in the responseData
     const latestOrderDate = new Date(Math.max(...responseData.map((item) => item.order_date.getTime())));
 
-    // Set the date to the start of the current month
     const startOfMonth = new Date(latestOrderDate);
     startOfMonth.setDate(1);
 
-    // Calculate the date 30 days before the latest date
     const thirtyDaysAgo = new Date(latestOrderDate);
     thirtyDaysAgo.setDate(latestOrderDate.getDate() - 30);
 
     const sixtyDaysAgo = new Date(latestOrderDate);
     sixtyDaysAgo.setDate(latestOrderDate.getDate() - 60);
 
-    // Initialize an object to store the data grouped by months
     const dataByMonths = {};
 
-    // Loop through the responseData and group orders by months
     responseData.forEach((item) => {
       const orderDate = new Date(item.order_date);
       if (orderDate >= thirtyDaysAgo && orderDate < latestOrderDate) {
@@ -80,13 +72,11 @@ const DashboardDefault = () => {
       }
     });
 
-    // Convert the grouped data object into an array of months
     const monthsArray = Object.keys(dataByMonths).map((monthKey) => ({
       month: monthKey,
       data: dataByMonths[monthKey]
     }));
 
-    // Sort the monthsArray based on the month (you can customize the sorting logic if needed)
     monthsArray.sort((a, b) => {
       const [yearA, monthA] = a.month.split('-');
       const [yearB, monthB] = b.month.split('-');
@@ -102,7 +92,6 @@ const DashboardDefault = () => {
     return <Loader />;
   }
 
-  // Call the function to get the calculated metrics
   const metrics = calculateMetrics(filteredData, filteredDataAgo);
 
   return (
@@ -211,6 +200,11 @@ const DashboardDefault = () => {
       <Grid item xs={12} md={6} lg={6}>
         <MainCard sx={{ mt: 1.75 }} border={false}>
           <RevenueBySourceChart data={filteredData} />
+        </MainCard>
+      </Grid>
+      <Grid item xs={12} md={12} lg={12}>
+        <MainCard sx={{ mt: 1.75 }} border={false}>
+          <RevenueByStateChart data={filteredData} />
         </MainCard>
       </Grid>
     </Grid>

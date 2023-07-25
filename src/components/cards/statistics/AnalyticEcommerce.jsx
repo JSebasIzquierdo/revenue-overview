@@ -3,13 +3,10 @@ import { Chip, Grid, Stack, Typography } from '@mui/material';
 import { CaretUpFilled, CaretDownFilled } from '@ant-design/icons';
 
 const AnalyticEcommerce = ({ title, count, percentage }) => {
-  // Determine whether it's a loss based on the percentage
   const isLoss = percentage < 0;
-
-  // Define styles for the label based on isLoss condition
   const labelStyle = {
     color: isLoss ? '#f5222d' : '#51d08d',
-    backgroundColor: 'transparent' // Use red color for loss, otherwise use the provided color prop
+    backgroundColor: 'transparent'
   };
 
   return (
@@ -34,7 +31,7 @@ const AnalyticEcommerce = ({ title, count, percentage }) => {
                 label={`${percentage}%`}
                 sx={{ ml: 0.5, pr: 0 }}
                 size="small"
-                style={labelStyle} // Apply the style based on the condition
+                style={labelStyle}
               />
             </Grid>
           )}

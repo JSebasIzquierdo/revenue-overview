@@ -24,7 +24,7 @@ const RevenueByDateChart = ({ data, type }) => {
     const newCustomerOrdersByDate = {};
 
     data?.forEach((item) => {
-      const dateStr = item.order_date.toISOString().substr(0, 10); // Convert date to "YYYY-MM-DD" format
+      const dateStr = item.order_date.toISOString().substr(0, 10);
       if (item.customer_type === 'Existing') {
         existingCustomerRevenue[dateStr] = (existingCustomerRevenue[dateStr] || 0) + parseFloat(item.order_revenue);
         existingCustomerOrdersByDate[dateStr] = (existingCustomerOrdersByDate[dateStr] || 0) + parseInt(item.num_orders);
@@ -32,7 +32,7 @@ const RevenueByDateChart = ({ data, type }) => {
     });
 
     data?.forEach((item) => {
-      const dateStr = item.order_date.toISOString().substr(0, 10); // Convert date to "YYYY-MM-DD" format
+      const dateStr = item.order_date.toISOString().substr(0, 10);
       revenueByDate[dateStr] = (revenueByDate[dateStr] || 0) + parseFloat(item.order_revenue);
       newCustomerOrdersByDate[dateStr] = (newCustomerOrdersByDate[dateStr] || 0) + parseInt(item.num_orders);
     });
@@ -64,7 +64,7 @@ const RevenueByDateChart = ({ data, type }) => {
         .reduce((sum, item) => sum + parseInt(item.num_orders), 0);
 
       return {
-        date: monthData.month, // Assuming monthData.month is in "YYYY-M" format
+        date: monthData.month,
         revenue: revenue,
         existingRevenue: existingRevenue,
         existingCustomerOrders: existingCustomerOrders,
@@ -101,20 +101,19 @@ const RevenueByDateChart = ({ data, type }) => {
           return Highcharts.dateFormat('%b %e', new Date(this.value));
         },
         style: {
-          color: '#c7c8c9'
+          color: '#fff'
         },
         rotation: -45
       };
     } else if (type.startsWith('month')) {
       return {
         style: {
-          color: '#c7c8c9'
+          color: '#fff'
         },
         rotation: -50
       };
     }
   };
-  
 
   const options = useMemo(() => {
     return {
@@ -134,10 +133,15 @@ const RevenueByDateChart = ({ data, type }) => {
       xAxis: {
         categories: xAxisCategories,
         labels: settingsXAxis(),
-        lineColor: '#ddd' // X-axis line color,
+        lineColor: '#ddd'
       },
       yAxis: [
         {
+          labels: {
+            style: {
+              color: '#c7c8c9'
+            }
+          },
           title: {
             text: 'Existing Customer Revenue',
             style: {
@@ -145,7 +149,13 @@ const RevenueByDateChart = ({ data, type }) => {
             }
           }
         },
+
         {
+          labels: {
+            style: {
+              color: '#c7c8c9'
+            }
+          },
           title: {
             text: 'Total Orders',
             style: {
@@ -219,7 +229,6 @@ const RevenueByDateChart = ({ data, type }) => {
       }
     };
   }, [chartData, type]);
-  // Get the appropriate chart data based on the type
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };

@@ -6,15 +6,11 @@ const RevenueBySourceChart = ({ data }) => {
   const [chartOptions, setChartOptions] = useState({});
 
   useEffect(() => {
-    // Process the data and create the chart options.
     const options = createChartOptions(data);
-
-    // Update the state with the chart options.
     setChartOptions(options);
   }, [data]);
 
   const createChartOptions = (data) => {
-    // Calculate the total revenue for each revenue source.
     const revenueBySource = {};
     data.forEach((item) => {
       const revenueSource = item.order_revenue_source;
@@ -24,16 +20,13 @@ const RevenueBySourceChart = ({ data }) => {
       revenueBySource[revenueSource] += parseFloat(item.order_revenue);
     });
 
-    // Convert the data to an array of objects.
     const chartData = Object.keys(revenueBySource).map((revenueSource) => ({
       name: revenueSource,
       y: revenueBySource[revenueSource]
     }));
 
-    // Sort the chartData based on total revenue in descending order
     chartData.sort((a, b) => b.y - a.y);
 
-    // Create the chart options based on the processed data.
     return {
       chart: {
         type: 'bar',

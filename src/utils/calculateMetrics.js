@@ -1,5 +1,4 @@
 const calculateMetrics = (filteredData, filteredDataAgo) => {
-  console.log(filteredData, filteredDataAgo);
   // Variables for the metrics
   var totalRevenue = 0;
   var totalOrders = 0;

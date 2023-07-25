@@ -9,7 +9,6 @@ import 'simplebar/src/simplebar.css';
 import { Provider as ReduxProvider } from 'react-redux';
 
 // apex-chart
-import 'assets/third-party/apex-chart.css';
 
 // project import
 import App from './App';

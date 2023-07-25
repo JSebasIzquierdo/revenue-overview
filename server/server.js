@@ -18,7 +18,7 @@ app.get('/api/csv', (req, res) => {
       // Split the CSV data into an array of lines
       const lines = data.trim().split('\n');
       // Assuming the first line contains the headers (column names)
-      const headers = lines[0].split(',');
+      const headers = lines[0].split(',').map((header) => header.trim()); // Use trim() to remove spaces from header names
       // Initialize an empty array to store the JSON objects
       const jsonArray = [];
 
@@ -27,7 +27,7 @@ app.get('/api/csv', (req, res) => {
         const values = lines[i].split(',');
         const jsonObject = {};
         for (let j = 0; j < headers.length; j++) {
-          jsonObject[headers[j]] = values[j];
+          jsonObject[headers[j]] = values[j].trim(); // Use trim() to remove newline characters
         }
         jsonArray.push(jsonObject);
       }

@@ -47,6 +47,14 @@ const RevenueBySourceChart = ({ data }) => {
     return (revenue / totalRevenue) * 100;
   };
 
+  // Modify the seriesData to use week start dates as categories
+  const categories = Object.keys(groupedOrders).map((weekStartDate) => {
+    const startDate = new Date(weekStartDate);
+    const month = startDate.toLocaleString('default', { month: 'short' });
+    const day = startDate.getDate();
+    return `${month} ${day}`;
+  });
+
   const seriesData = [];
   const sourceNames = {}; // Used to map source names to index in the series array
 
@@ -96,7 +104,7 @@ const RevenueBySourceChart = ({ data }) => {
       }
     },
     xAxis: {
-      type: 'datetime',
+      categories: categories, // Use the week start dates as categories
       labels: {
         style: {
           color: '#c7c8c9'
@@ -132,7 +140,6 @@ const RevenueBySourceChart = ({ data }) => {
         color: '#c7c8c9'
       }
     },
-
     series: seriesData
   };
 

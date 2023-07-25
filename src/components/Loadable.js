@@ -1,15 +1,11 @@
 import { Suspense } from 'react';
-
-// project import
 import Loader from './Loader';
 
-// ==============================|| LOADABLE - LAZY LOADING ||============================== //
-
-const Loadable = (Component) => (props) =>
-  (
-    <Suspense fallback={<Loader />}>
-      <Component {...props} />
-    </Suspense>
-  );
+const Loadable = (Component) => ({ loading, ...props }) => (
+  <Suspense fallback={loading ? <Loader /> : null}>
+    {loading ? null : <Component {...props} />}
+  </Suspense>
+);
 
 export default Loadable;
+

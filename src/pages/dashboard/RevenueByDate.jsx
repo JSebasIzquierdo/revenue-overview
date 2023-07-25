@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import PropTypes from 'prop-types';
 
 const RevenueByDateChart = ({ data, type }) => {
-  console.log('type', type);
+  RevenueByDateChart.propTypes = {
+    data: PropTypes.arrayOf(
+      PropTypes.shape({
+        order_date: PropTypes.instanceOf(Date),
+        order_revenue: PropTypes.number,
+        customer_type: PropTypes.string,
+        num_orders: PropTypes.number,
+        date: PropTypes.string
+      })
+    ),
+    type: PropTypes.oneOf(['daily', 'month'])
+  };
 
   const getDailyChartData = (data) => {
     const revenueByDate = {};
@@ -65,8 +77,9 @@ const RevenueByDateChart = ({ data, type }) => {
     return chartData;
   };
 
-  // Get the appropriate chart data based on the type
-  const chartData = type === 'daily' ? getDailyChartData(data) : getMonthlyChartData(data);
+  const chartData = useMemo(() => {
+    return type === 'daily' ? getDailyChartData(data) : getMonthlyChartData(data);
+  }, [data, type]);
 
   const xAxisCategories = chartData.map((data) => {
     if (type === 'daily') {
@@ -92,7 +105,7 @@ const RevenueByDateChart = ({ data, type }) => {
         },
         rotation: -45
       };
-    } else if (type === 'month') {
+    } else if (type.startsWith('month')) {
       return {
         style: {
           color: '#c7c8c9'
@@ -101,108 +114,112 @@ const RevenueByDateChart = ({ data, type }) => {
       };
     }
   };
+  
 
-  const options = {
-    chart: {
-      type: 'column',
-      backgroundColor: '#202127'
-    },
+  const options = useMemo(() => {
+    return {
+      chart: {
+        type: 'column',
+        backgroundColor: '#202127'
+      },
 
-    title: {
-      text: 'Revenue By Date',
-      align: 'left',
-      margin: 30,
-      style: {
-        color: '#c7c8c9'
-      }
-    },
-    xAxis: {
-      categories: xAxisCategories,
-      labels: settingsXAxis(),
-      lineColor: '#ddd' // X-axis line color,
-    },
-    yAxis: [
-      {
-        title: {
-          text: 'Existing Customer Revenue',
-          style: {
-            color: '#c7c8c9'
-          }
+      title: {
+        text: 'Revenue By Date',
+        align: 'left',
+        margin: 30,
+        style: {
+          color: '#c7c8c9'
         }
       },
-      {
-        title: {
-          text: 'Total Orders',
-          style: {
-            color: '#c7c8c9'
+      xAxis: {
+        categories: xAxisCategories,
+        labels: settingsXAxis(),
+        lineColor: '#ddd' // X-axis line color,
+      },
+      yAxis: [
+        {
+          title: {
+            text: 'Existing Customer Revenue',
+            style: {
+              color: '#c7c8c9'
+            }
           }
         },
-        gridLineColor: '#c7c8c9',
-        opposite: true
-      }
-    ],
-    plotOptions: {
-      column: {
-        stacking: 'column',
-        borderColor: 'none'
-      }
-    },
-    tooltip: {
-      pointFormatter: function () {
-        return `<span style="color:${this.color}">\u25CF</span> ${this.series.name}: <b>${Highcharts.numberFormat(
-          this.y,
-          2,
-          ',',
-          '.'
-        )}</b><br/>`;
-      }
-    },
-    series: [
-      {
-        name: 'New Customer Revenue',
-        data: chartData.map((data) => data.revenue),
-        dataLabels: {
-          enabled: true,
-          verticalAlign: 'top',
-          formatter: function () {
-            return Highcharts.numberFormat(this.y, 0, ',', '.');
+        {
+          title: {
+            text: 'Total Orders',
+            style: {
+              color: '#c7c8c9'
+            }
           },
-          style: {
-            color: '#c7c8c9'
-          }
+          gridLineColor: '#c7c8c9',
+          opposite: true
+        }
+      ],
+      plotOptions: {
+        column: {
+          stacking: 'column',
+          borderColor: 'none'
+        }
+      },
+      tooltip: {
+        pointFormatter: function () {
+          return `<span style="color:${this.color}">\u25CF</span> ${this.series.name}: <b>${Highcharts.numberFormat(
+            this.y,
+            2,
+            ',',
+            '.'
+          )}</b><br/>`;
+        }
+      },
+      series: [
+        {
+          name: 'New Customer Revenue',
+          data: chartData.map((data) => data.revenue),
+          dataLabels: {
+            enabled: true,
+            verticalAlign: 'top',
+            formatter: function () {
+              return Highcharts.numberFormat(this.y, 0, ',', '.');
+            },
+            style: {
+              color: '#c7c8c9'
+            }
+          },
+          color: '#fff58c'
         },
-        color: '#fff58c'
-      },
-      {
-        name: 'Existing Customer Revenue',
-        data: chartData.map((data) => data.existingRevenue),
-        color: '#b6b7c2'
-      },
-      {
-        name: 'Total Orders',
-        data: chartData.map((data) => data.existingCustomerOrders + data.newCustomerOrders),
-        yAxis: 1,
-        type: 'line',
-        color: '#40424d'
-      },
-      {
-        name: 'New Customer Orders',
-        data: chartData.map((data) => data.newCustomerOrders),
-        yAxis: 1,
-        type: 'line',
-        color: '#ff9b0f'
+        {
+          name: 'Existing Customer Revenue',
+          data: chartData.map((data) => data.existingRevenue),
+          color: '#b6b7c2'
+        },
+        {
+          name: 'Total Orders',
+          data: chartData.map((data) => data.existingCustomerOrders + data.newCustomerOrders),
+          yAxis: 1,
+          type: 'line',
+          color: '#40424d'
+        },
+        {
+          name: 'New Customer Orders',
+          data: chartData.map((data) => data.newCustomerOrders),
+          yAxis: 1,
+          type: 'line',
+          color: '#ff9b0f'
+        }
+      ],
+      legend: {
+        align: 'right',
+        symbolWidth: 10,
+        symbolHeight: 10,
+        layout: 'horizontal',
+        itemStyle: {
+          color: '#c7c8c9'
+        }
       }
-    ],
-    legend: {
-      align: 'right',
-      symbolWidth: 10,
-      symbolHeight: 10,
-      layout: 'horizontal',
-      itemStyle: {
-        color: '#c7c8c9'
-      }
-    }
-  };
+    };
+  }, [chartData, type]);
+  // Get the appropriate chart data based on the type
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
